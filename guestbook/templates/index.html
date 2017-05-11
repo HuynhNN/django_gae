@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Guestbook</title>
+</head>
+<body>
+{% for greeting in greetings %}
+	{% if greeting.author.nickname %}
+	<b>{{ greeting.author|escape }}</b> wrote:
+	{% else %}
+	An anonymous person wrote:
+	{% endif %}
+	<blockquote>{{ greeting.content|escape }}</blockquote>
+{% endfor %}
+	<a href="{% url 'guestbook:sign' %}?guestbook_name={{guestbook_name}}"> Sign Post </a>
+	<form>
+		Guestbook Name: <input value="{{ guestbook_name }}" name="guestbook_name">
+		<input type="submit" value="Switch">
+	</form>
+	<a href="{{ url }}">{{ url_linkText }}</a>
+</body>
+</html>

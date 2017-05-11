@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Sign Guestbook</title>
+</head>
+<body>
+	<form action="/sign/" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<div><input type="submit" value="Sign Guestbook"></div>
+	</form>
+	<a href="{% url 'guestbook:index' %}?guestbook_name={{guestbook_name}}">Back</a>
+</body>
+</html>
