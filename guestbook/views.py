@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic import TemplateView, FormView
 from django import forms
 from google.appengine.api import users
+from google.appengine.ext import ndb
 from guestbook.models import DEFAULT_GUESTBOOK_NAME, Greeting, get_guestbook_key
 
 
@@ -47,19 +48,20 @@ class Sign_View(FormView):
 		return self.render_to_response(self.get_context_data(form=form))
 
 	def form_valid(self, form):
-		guestbook_name = form.cleaned_data.get('guestbook_name')
-		content = form.cleaned_data.get('greeting_message')
-		greeting = Greeting(parent=get_guestbook_key(guestbook_name))
-		if users.get_current_user():
-			greeting.author = users.get_current_user()
-		greeting.content = content
-		greeting.put()
+		@ndb.transactional(xg=True)
+		def txt(form):
+			guestbook_name = form.cleaned_data.get('guestbook_name')
+			content = form.cleaned_data.get('greeting_message')
+			greeting = Greeting(parent=get_guestbook_key(guestbook_name))
+			if users.get_current_user():
+				greeting.author = users.get_current_user()
+			greeting.content = content
+			greeting.put()
+			return guestbook_name
+		guestbook_name = txt(form)
 		url = self.success_url
 		self.success_url = '%s?guestbook_name=%s' % (url, guestbook_name)
 		return super(Sign_View, self).form_valid(form)
-
-	def form_invalid(self, form):
-		return self.render_to_response(self.get_context_data(form=form))
 
 	def get_context_data(self, **kwargs):
 		guestbook_name = kwargs['form']['guestbook_name'].value()
