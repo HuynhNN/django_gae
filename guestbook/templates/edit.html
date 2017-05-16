@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Edit Guestbook</title>
+</head>
+<body>
+	<form action="/edit/" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<div><input type="submit" value="Submit"></div>
+		<div>
+			<input type="button" value="Cancel"
+					onclick="location.href='{% url 'guestbook:index' %}?guestbook_name={{guestbook_name}}';">
+		</div>
+	</form>
+</body>
+</html>
