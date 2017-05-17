@@ -4,7 +4,7 @@ from django import forms
 
 
 class PostGreetingForm(forms.Form):
-	guestbook_name = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'True'}), label="Guestbook Name")
+	guestbook_name = forms.CharField(widget=forms.HiddenInput, label='')
 	greeting_message = forms.CharField(widget=forms.Textarea, label="Message", max_length=200)
 
 
