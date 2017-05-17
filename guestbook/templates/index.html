@@ -6,17 +6,43 @@
 </head>
 <body>
 {% for greeting in greetings %}
-	{% if greeting.author.nickname %}
-	<b>{{ greeting.author|escape }}</b> wrote:
+	<div style="border: groove thick">
+	{% if greeting.author %}
+		<b>{{ greeting.author|escape }}</b> wrote:
 	{% else %}
-	An anonymous person wrote:
+		An anonymous person wrote:
 	{% endif %}
-	<blockquote>{{ greeting.content|escape }}</blockquote>
+		<blockquote>
+			{{ greeting.content|escape }}
+		</blockquote>
+	{% if greeting.user_updated %}
+		<ul>
+			<li>Updated: {{ greeting.updated|escape }}</li>
+			<li>Updated by: {{ greeting.user_updated|escape }}</li>
+		</ul>
+	{% endif %}
+	{% if is_admin or user_login and greeting.author == user_logined %}
+		<form method="post" action="{% url 'guestbook:delete' greeting.key.id guestbook_name %}">
+			{% csrf_token %}
+			<input type="submit" value="Delete">
+			<input type="button" value="Edit"
+					onclick="location.href='{% url 'guestbook:edit' greeting.key.id guestbook_name %}';">
+		</form>
+	{% endif %}
+	</div>
 {% endfor %}
-	<a href="{% url 'guestbook:sign' %}?guestbook_name={{guestbook_name}}"> Sign Post </a>
+	{% if greetings|length > 0 %}
+		<a href="{% url 'guestbook:index' %}?guestbook_name={{ guestbook_name }}&limit={{greetings|length}}">first</a>
+		{% if more %}
+			<a href="{% url 'guestbook:index' %}?guestbook_name={{ guestbook_name }}&cursor={{cursor_next}}">next</a>
+		{% endif %}
+		<br/>
+	{% endif %}
+
+	<a href="/{{guestbook_name|escape}}/new">Create Greeting</a>
 	<form>
-		Guestbook Name: <input value="{{ guestbook_name }}" name="guestbook_name">
-		<input type="submit" value="Switch">
+		Guestbook Name: <input value="{{ guestbook_name }}" name="guestbook_name"  id="guestbookname">
+		<input type="submit" value="Go to Guestbook">
 	</form>
 	<a href="{{ url }}">{{ url_linkText }}</a>
 </body>
