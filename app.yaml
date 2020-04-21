@@ -1,17 +1,30 @@
-application: django-guestnook
-version: 1
 runtime: python27
 api_version: 1
 threadsafe: yes
 
+libraries:
+- name: django
+  version: "latest"
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'settings'
+
+builtins:
+- remote_api: on
+
+
+skip_files:
+- ^(/)?static/css/.*
+
 handlers:
+
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
 
-- url: .*
-  script: main.app
+#- url: /static
+#  static_dir: client/build
 
-libraries:
-- name: webapp2
-  version: "2.5.2"
+- url: .*
+  script: main.application
+
